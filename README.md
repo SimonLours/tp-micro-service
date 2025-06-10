@@ -239,7 +239,33 @@ Gérer la concurrence et la robustesse (déconnexions, reconnexions, erreurs),
 
 Sécuriser les échanges (chiffrement, filtrage d’injections, etc.).
 
+-----------------------------------------------------------------------------------------------------------
 
+-----------------------------------------------------------------------------------------------------------
+
+**__PARTIE VIII__**
+
+**1.Pourquoi faut-il protéger certaines sections du code ?**
+
+Lorsqu’une ressource (liste, fichier, variable globale…) est utilisée par plusieurs threads, il peut y avoir des accès concurrents non contrôlés.
+
+Sans protection, plusieurs threads peuvent modifier la même ressource en même temps, ce qui provoque des résultats imprévisibles : mélange de données, perte d’informations, erreurs, corruption.
+
+Protéger une section du code avec un verrou (mutex, lock) garantit que seul un thread à la fois peut modifier la ressource (on parle de section critique).
+
+**2.Que risque-t-on si deux clients modifient une même ressource simultanément ?**
+
+On risque des conditions de course :
+
+Un message peut être écrasé par un autre,
+
+Des données peuvent être perdues ou corrompues,
+
+Le programme peut planter ou se retrouver dans un état incohérent,
+
+Les logs ou historiques peuvent devenir illisibles ou incomplets.
+
+C’est pour cette raison qu’il est essentiel de synchroniser les accès concurrents à une ressource partagée.
 
 -----------------------------------------------------------------------------------------------------------
 
