@@ -157,17 +157,88 @@ Il est donc très dangereux d’utiliser eval() sans contrôle strict.
 
 Il faut encapsuler l’appel à eval() dans un bloc try...except pour capturer toute exception :
 
-
-try:
-
-    result = eval(expression)
-    
+    try:
+    result = eval(expression)  
     conn.send(str(result).encode())
-    
-except Exception as e:
-
+    except Exception as e:
     conn.send(f"Erreur: {e}".encode())
     
+-----------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------
+
+**__PARTIE VI__**
+
+**1.Pourquoi structurer les messages avec /commande ?**
+
+Structurer les messages avec un préfixe (comme /commande) permet de :
+
+Différencier clairement les messages “spéciaux” (commandes) des messages classiques,
+
+Simplifier le traitement côté serveur (ex: /me, /all, /help, etc.),
+
+Rendre le protocole extensible : il suffit d’ajouter de nouvelles commandes,
+
+Faciliter la lecture et la maintenance du code,
+
+Éviter les ambiguïtés dans les échanges (ex : un simple message texte ne sera pas traité comme une commande).
+
+
+**2.Comment distinguer facilement les types de messages côté serveur ?**
+
+On peut :
+
+Vérifier si un message commence par / pour détecter une commande,
+
+Utiliser la méthode .split(" ", 1) pour séparer le nom de la commande du reste du texte,
+
+Traiter chaque commande avec un if/elif/else ou via un dictionnaire de fonctions associées aux commandes,
+
+Tout message ne commençant pas par / est traité comme un message normal.
+
+
+-----------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------
+
+**__PARTIE VII__**
+
+**1.Que se passe-t-il si deux clients envoient des messages en même temps ?**
+
+Si le serveur traite chaque client dans un thread séparé, les deux messages peuvent arriver quasiment en même temps.
+
+Si ces messages doivent accéder à une ressource partagée (par exemple, une liste de messages ou un fichier), il y a un risque de conflit (ex : mélange, écrasement, corruption des données), ce qu’on appelle une condition de course (race condition).
+
+Si chaque client est indépendant et ne p
+
+**2.Peut-on garder un état partagé entre clients ? Est-ce souhaitable ?**
+
+Oui, il est possible de garder un état partagé (ex : une liste commune des messages, ou la liste des utilisateurs connectés).
+
+Mais il faut faire très attention :
+
+Il faut protéger l’accès à cette ressource partagée avec des verrous (mutex, threading.Lock) pour éviter les accès concurrents non contrôlés.
+
+Ce n’est souhaitable que si c’est utile : par exemple, si on veut une messagerie de groupe ou partager des infos entre clients.
+
+Si chaque client doit rester isolé, il vaut mieux éviter le partage.
+
+**3.Que faut-il pour aller plus loin vers une vraie messagerie ?**
+
+Pour s’approcher d’une vraie messagerie :
+
+Gérer les utilisateurs (identifiant, connexion/déconnexion, authentification…),
+
+Gérer la diffusion des messages à plusieurs clients en temps réel,
+
+Maintenir un historique des messages,
+
+Mettre en place un protocole pour les différentes actions (messages privés, groupes, notifications, etc.),
+
+Gérer la concurrence et la robustesse (déconnexions, reconnexions, erreurs),
+
+Sécuriser les échanges (chiffrement, filtrage d’injections, etc.).
+
 
 
 -----------------------------------------------------------------------------------------------------------
