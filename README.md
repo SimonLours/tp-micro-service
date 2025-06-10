@@ -2,6 +2,7 @@
 
 
 **1. À quel moment la socket côté serveur est-elle bloquante ?**
+
 La socket côté serveur devient bloquante lors de l’appel à la méthode accept().
 En effet, quand le serveur exécute la ligne conn, addr = serveur.accept(), il attend (bloque) qu’un client se connecte. Tant qu’aucun client ne tente de connexion, cette ligne reste bloquée et le programme serveur ne continue pas plus loin.
 
@@ -10,12 +11,14 @@ On dit que le serveur est “bloqué” dans ces appels car il attend un événe
 
 
 **2. Que se passe-t-il si le client se connecte avant que le serveur ne soit prêt ?**
+
 Si le client tente de se connecter avant que le serveur n’ait appelé bind() et listen(), la connexion échoue.
 Dans ce cas, le client reçoit une erreur du type “Connection refused” (connexion refusée), car il n’y a rien qui écoute sur le port demandé.
 Le client doit donc être lancé après le serveur pour que la connexion puisse s’établir correctement
 
 
 **3. Quelle est la différence entre bind() et listen() ?**
+
 bind() : permet d’associer la socket à une adresse IP et à un port sur la machine.
 → C’est comme “réserver” une porte d’entrée sur l’ordinateur pour écouter les connexions à venir.
 
