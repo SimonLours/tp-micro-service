@@ -1,7 +1,7 @@
 import socket
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(("localhost", 63000))
+client.connect(("172.16.20.139", 63000))
 
 while True:
     msg = input("Vous > ")
