@@ -4,7 +4,7 @@
 
 -----------------------------------------------------------------------------------------------------------
 
-#PARTIE I
+**PARTIE I**
 
 
 **1. À quel moment la socket côté serveur est-elle bloquante ?**
@@ -36,7 +36,7 @@ listen() : indique que la socket est maintenant prête à accepter des connexion
 
 -----------------------------------------------------------------------------------------------------------
 
-#PARTIE II
+**PARTIE II**
 
 **1. Pourquoi faut-il une boucle dans le serveur ?**
 
@@ -57,8 +57,37 @@ Pour envoyer plusieurs réponses d’affilée, il faudrait modifier le code pour
 Dans le modèle “echo”, chaque message du client entraîne une seule réponse immédiate du serveur, pas plus.
 
 
+-----------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------
+
+**PARTIE II**
+
+**1. Le serveur peut-il rester actif après une déconnexion client ?**
+
+Oui, le serveur peut parfaitement rester actif après la déconnexion d’un client.
+Il suffit d’utiliser une boucle principale qui relance l’attente d’une nouvelle connexion (serveur.accept()) chaque fois qu’un client termine la communication et que sa socket est fermée.
+Ainsi, le serveur est capable d’enchaîner les connexions successives sans s’arrêter, il reste donc en fonctionnement en attendant d’autres clients.
+
+**2. Que faut-il modifier pour accepter plusieurs clients à la suite ?**
+
+Pour accepter plusieurs clients à la suite, il faut :
+
+Mettre l’appel à accept() dans une boucle infinie (par exemple, while True:).
+
+À chaque nouvelle connexion (conn, addr = serveur.accept()), gérer la communication avec ce client, puis fermer la socket correspondante une fois la communication terminée.
+
+Ensuite, la boucle recommence et le serveur est prêt à accepter un nouveau client.
+
+Cela permet d’enchaîner les clients un par un, sans avoir besoin de relancer le serveur à chaque fois.
+
+**3. Peut-on imaginer accepter des clients en parallèle ?**
+
+Oui, il est tout à fait possible d’accepter des clients en parallèle.
+Pour cela, on utilise par exemple des threads
 
 
 
+-----------------------------------------------------------------------------------------------------------
 
 Pedrero / Lours
