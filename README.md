@@ -86,7 +86,35 @@ Cela permet d’enchaîner les clients un par un, sans avoir besoin de relancer 
 Oui, il est tout à fait possible d’accepter des clients en parallèle.
 Pour cela, on utilise par exemple des threads
 
+-----------------------------------------------------------------------------------------------------------
 
+-----------------------------------------------------------------------------------------------------------
+
+**__PARTIE IV__**
+
+**1. Comment s’assurer que les deux côtés ne parlent pas en même temps ?**
+
+Pour s’assurer que les deux côtés ne parlent pas en même temps, il faut instaurer un tour de parole :
+
+Soit en définissant une règle stricte dans le protocole (par exemple, le client écrit, puis le serveur répond, et ainsi de suite).
+
+Soit en alternant systématiquement l’envoi et la réception (chacun attend son tour pour envoyer un message).
+
+**2. Peut-on rendre cet échange non bloquant ? Comment ?**
+
+Oui, on peut rendre l’échange non bloquant :
+
+En utilisant des threads (un pour envoyer, un pour recevoir), chaque côté peut écouter et parler indépendamment.
+
+Ou en utilisant la fonction select() (ou des sockets en mode non bloquant), qui permet de savoir si des données sont prêtes à être lues ou écrites sans bloquer le programme.
+
+**3. Quelle est la meilleure façon de quitter proprement la communication ?**
+
+La meilleure façon de quitter proprement la communication est de :
+
+Envoyer un message spécial (par exemple, "fin", /quit, etc.) pour prévenir l’autre côté de la fermeture.
+
+Ensuite, chaque côté peut fermer la socket de manière propre avec la méthode .close(), ce qui libère les ressources réseau.
 
 -----------------------------------------------------------------------------------------------------------
 
