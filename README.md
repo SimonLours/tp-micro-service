@@ -86,6 +86,7 @@ Cela permet d’enchaîner les clients un par un, sans avoir besoin de relancer 
 Oui, il est tout à fait possible d’accepter des clients en parallèle.
 Pour cela, on utilise par exemple des threads
 
+
 -----------------------------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------
@@ -94,27 +95,74 @@ Pour cela, on utilise par exemple des threads
 
 **1. Comment s’assurer que les deux côtés ne parlent pas en même temps ?**
 
-Pour s’assurer que les deux côtés ne parlent pas en même temps, il faut instaurer un tour de parole :
+Pour s’assurer que les deux côtés ne parlent pas en même temps, il faut imposer un ordre dans l’échange des messages. Par exemple, on peut décider que :
 
-Soit en définissant une règle stricte dans le protocole (par exemple, le client écrit, puis le serveur répond, et ainsi de suite).
+Le client commence : il envoie un message, puis attend la réponse du serveur.
 
-Soit en alternant systématiquement l’envoi et la réception (chacun attend son tour pour envoyer un message).
+Le serveur, de son côté, attend de recevoir le message du client, l’affiche, puis saisit sa réponse à envoyer.
+
+Ensuite, le client reprend la main, etc.
+
+Cela crée un dialogue à tour de rôle ("tour par tour"), ce qui évite qu’ils écrivent tous les deux en même temps.
 
 **2. Peut-on rendre cet échange non bloquant ? Comment ?**
 
-Oui, on peut rendre l’échange non bloquant :
+Oui, il est possible de rendre l’échange non bloquant.
+Pour cela, on peut :
 
-En utilisant des threads (un pour envoyer, un pour recevoir), chaque côté peut écouter et parler indépendamment.
+Utiliser le mode non bloquant des sockets (setblocking(False)) : les méthodes recv() ou send() ne bloqueront plus l’exécution, mais il faudra gérer les exceptions si aucune donnée n’est disponible.
 
-Ou en utilisant la fonction select() (ou des sockets en mode non bloquant), qui permet de savoir si des données sont prêtes à être lues ou écrites sans bloquer le programme.
+Utiliser la fonction select() : cela permet de vérifier si une socket est prête à lire ou écrire avant d’appeler recv() ou send(), évitant ainsi de bloquer le programme.
+
+Ou encore, utiliser des threads : un thread pour écouter les messages entrants, un autre pour gérer l’envoi (mais cela complique la gestion de l’ordre du dialogue).
+
+Mais dans le cadre d’un échange à tour de rôle, le mode bloquant reste plus simple à gérer.
 
 **3. Quelle est la meilleure façon de quitter proprement la communication ?**
 
-La meilleure façon de quitter proprement la communication est de :
+La meilleure façon est de :
 
-Envoyer un message spécial (par exemple, "fin", /quit, etc.) pour prévenir l’autre côté de la fermeture.
+Prévoir un message spécial (ex : "fin", "quit", etc.) qui indique la volonté de terminer la discussion.
 
-Ensuite, chaque côté peut fermer la socket de manière propre avec la méthode .close(), ce qui libère les ressources réseau.
+Lorsqu’un des deux participants envoie ce message, les deux programmes doivent alors :
+
+Afficher un message de fermeture,
+
+Fermer proprement la socket avec close(),
+
+Quitter la boucle de dialogue pour terminer le programme sans erreur.
+
+Cela évite les coupures brutales et libère correctement les ressources.
+
+
+-----------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------
+
+**__PARTIE V__**
+
+**Quels sont les risques d’utiliser eval() ? (souvenirs de FONDADEV)**
+
+eval() exécute n’importe quelle expression Python passée en argument. Les risques sont donc :
+
+Sécurité : un utilisateur malveillant peut envoyer du code dangereux (ex : os.system("rm -rf /")) et exécuter des commandes sur le serveur.
+
+Stabilité : eval() peut aussi provoquer des exceptions (division par zéro, erreurs de syntaxe…) qui font planter le programme si elles ne sont pas gérées.
+
+Confidentialité : accès possible à des variables ou objets internes du serveur.
+
+Il est donc très dangereux d’utiliser eval() sans contrôle strict.
+
+**2. Comment renvoyer une erreur sans faire planter le serveur ?**
+
+Il faut encapsuler l’appel à eval() dans un bloc try...except pour capturer toute exception :
+
+try:
+    result = eval(expression)
+    conn.send(str(result).encode())
+except Exception as e:
+    conn.send(f"Erreur: {e}".encode())
+
 
 -----------------------------------------------------------------------------------------------------------
 
