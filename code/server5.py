@@ -9,14 +9,16 @@ conn, addr = serveur.accept()
 print(f"Connexion de {addr}")
 
 while True:
-    message = conn.recv(1024).decode()
-    if message == "fin":
+    expression = conn.recv(1024).decode()
+    if expression == "fin":
         break
-    print("Client dit :", message)
-    reponse = input("Répondre > ")
-    conn.send(reponse.encode())
-    if reponse == "fin":
-        break
+    print("Expression reçue :", expression)
+    try:
+        # Eval est risqué, mais ici on l'utilise à titre pédagogique
+        result = eval(expression)
+        conn.send(str(result).encode())
+    except Exception as e:
+        conn.send(f"Erreur: {e}".encode())
 
 conn.close()
 serveur.close()
