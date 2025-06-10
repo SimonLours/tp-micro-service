@@ -157,11 +157,17 @@ Il est donc très dangereux d’utiliser eval() sans contrôle strict.
 
 Il faut encapsuler l’appel à eval() dans un bloc try...except pour capturer toute exception :
 
+
 try:
+
     result = eval(expression)
+    
     conn.send(str(result).encode())
+    
 except Exception as e:
+
     conn.send(f"Erreur: {e}".encode())
+    
 
 
 -----------------------------------------------------------------------------------------------------------
