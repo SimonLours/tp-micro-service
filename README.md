@@ -1,10 +1,10 @@
-# tp-micro-service
+# __tp-micro-service__
 
 -----------------------------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------
 
-**PARTIE I**
+**__PARTIE I__**
 
 
 **1. À quel moment la socket côté serveur est-elle bloquante ?**
@@ -36,7 +36,7 @@ listen() : indique que la socket est maintenant prête à accepter des connexion
 
 -----------------------------------------------------------------------------------------------------------
 
-**PARTIE II**
+**__PARTIE II__**
 
 **1. Pourquoi faut-il une boucle dans le serveur ?**
 
@@ -61,7 +61,7 @@ Dans le modèle “echo”, chaque message du client entraîne une seule répons
 
 -----------------------------------------------------------------------------------------------------------
 
-**PARTIE II**
+**__PARTIE III__**
 
 **1. Le serveur peut-il rester actif après une déconnexion client ?**
 
