@@ -1,5 +1,11 @@
 # tp-micro-service
 
+-----------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------
+
+#PARTIE I
+
 
 **1. À quel moment la socket côté serveur est-elle bloquante ?**
 
@@ -24,6 +30,31 @@ bind() : permet d’associer la socket à une adresse IP et à un port sur la ma
 
 listen() : indique que la socket est maintenant prête à accepter des connexions entrantes.
 → C’est le moment où le serveur “ouvre la porte” et se met en attente des demandes de connexion.
+
+
+-----------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------
+
+#PARTIE II
+
+**1. Pourquoi faut-il une boucle dans le serveur ?**
+
+Il faut une boucle dans le serveur pour pouvoir gérer plusieurs messages successifs envoyés par le client, sans avoir à recréer la connexion à chaque fois.
+La boucle permet d’écouter continuellement les messages, de les traiter (ici : les renvoyer, effet “echo”) tant que la communication n’est pas terminée.
+Sans boucle, le serveur traiterait un seul message puis s’arrêterait, ce qui limiterait énormément l’intérêt d’une communication réseau.
+
+**2. Que se passe-t-il si on oublie de tester msg == "fin" ?**
+
+Si on oublie de tester msg == "fin", la boucle ne s’arrêtera jamais automatiquement, même quand le client souhaite mettre fin à la communication.
+Le serveur restera bloqué à attendre et traiter les messages indéfiniment, ou continuera à renvoyer les mêmes messages sans jamais fermer la connexion.
+Cela peut provoquer un blocage ou forcer le client à fermer brutalement la connexion, ce qui n’est pas propre.
+
+**3. Est-ce que le serveur peut envoyer plusieurs réponses d’affilée ?**
+
+Non, le serveur Echo classique n’envoie une réponse qu’après avoir reçu un message du client (il fait un “echo” : un message reçu = un message renvoyé).
+Pour envoyer plusieurs réponses d’affilée, il faudrait modifier le code pour envoyer plusieurs messages depuis le serveur sans attendre une demande du client.
+Dans le modèle “echo”, chaque message du client entraîne une seule réponse immédiate du serveur, pas plus.
 
 
 
