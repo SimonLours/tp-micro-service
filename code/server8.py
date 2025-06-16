@@ -35,7 +35,7 @@ def gerer_client(conn, addr):
 serveur = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serveur.bind(("", 63000))
 serveur.listen()
-print("🟢 Serveur prêt (accès concurrent protégé + historique avec /list)")
+print("Serveur prêt (accès concurrent protégé + historique avec /list)")
 
 while True:
     conn, addr = serveur.accept()
