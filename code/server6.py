@@ -16,7 +16,7 @@ while True:
     print("Expression reçue :", expression)
 
     try:
-        # ⚠️ Attention : eval() exécute du code Python, dangereux en production !
+        # Attention : eval() exécute du code Python, dangereux en prod !
         result = eval(expression)
         conn.send(str(result).encode())
     except Exception as e:
